@@ -2,11 +2,12 @@ import * as log4js from "log4js"
 import { MainModule } from "../common/main-module";
 import { IModuleConstructor, ModuleBase } from "../common/module-base";
 import { AntiRevokeModule } from "./anti-revoke";
+import { MiscModule } from "./misc";
 import { MPCModule } from "./mpc";
 
 const logger = log4js.getLogger()
 
-const registeredModules: IModuleConstructor<ModuleBase>[] = [MPCModule, AntiRevokeModule]
+const registeredModules: IModuleConstructor<ModuleBase>[] = [MiscModule, MPCModule, AntiRevokeModule]
 const initializedModules: ModuleBase[] = []
 export { registeredModules, initializedModules }
 

@@ -1,6 +1,7 @@
 import * as log4js from "log4js"
 import { MainModule } from "../../common/main-module"
 import { ModuleBase } from "../../common/module-base"
+import { AppDataSource } from "../../data-source"
 import { User } from "../../entity/user"
 import { getRequiredService } from "../../service"
 import { Command, CommandService } from "../../service/command"
@@ -11,10 +12,6 @@ const logger = log4js.getLogger()
 
 export class AntiRevokeModule extends ModuleBase {
     private userService!: UserService
-
-    constructor(mm: MainModule) {
-        super(mm)
-    }
 
     initialize(): void {
         this.userService = getRequiredService(UserService)
@@ -29,6 +26,10 @@ export class AntiRevokeModule extends ModuleBase {
                 remove: {
                     type: 'string',
                     alias: 'r'
+                },
+                list: {
+                    type: 'boolean',
+                    alias: 'l'
                 }
             },
             command: async (msg, args) => {
@@ -39,6 +40,13 @@ export class AntiRevokeModule extends ModuleBase {
                 if (args.remove != undefined) {
                     this.userService.removePermission((args.remove as string).concat('@c.us'), 'anti-revoke.ingore')
                     msg.reply(`successfully removed '${args.remove}' from ignore!`)
+                }
+                if (args.list) {
+                    let users = await AppDataSource.getRepository(User).find()
+                    let result = users.filter(x => x.permissions.some(y => y === 'anti-revoke.ingore'))
+                        .map(x => x.whatsappId.split('@')[0])
+                        .reduce((x, y) => x.concat('\n', y))
+                    msg.reply(`ignored users:\n${result}`)
                 }
             }
         }))

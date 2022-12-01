@@ -27,25 +27,6 @@ log4js.configure({
 const logger = log4js.getLogger()
 
 
-// let cmdMap: Map<string, (msg: Message, parameters: string[]) => void> = new Map([
-//     // ["hello", function(msg, parameters) {
-//     //     if (parameters.length > 0) {
-//     //         msg.reply(`hi ${parameters.join(' ')}`)
-//     //     }
-//     //     else {
-//     //         msg.reply('hi')
-//     //     }
-//     // }],
-//     ['version', function(msg, parameters) {
-//         msg.reply('Hello I am Bolt, a bot under test')
-//     }],
-//     ["calcgaeness", function(msg, parameters) {
-//         if (parameters.length > 0) {
-//             msg.reply(`The gaeness of ${parameters.join(' ')} is ${Math.floor(Math.random() * 101)}%`)
-//         }
-//     }]
-// ])
-
 const client = new Client({
     authStrategy: new LocalAuth()
 })
@@ -79,14 +60,6 @@ client.on('message_create', async msg => {
     logger.info(`Msg Recieved From: ${msg.from}, To: ${msg.to}, Body: ${msg.body}`)
     if (msg.body.startsWith('/')) {
         logger.debug(`Processing Command '${msg.body}' ...`)
-        // let cmdLine = msg.body.split(' ')
-        // let cmdName = cmdLine[0].substring(1)
-        // cmdMap.forEach((func, key) => {
-        //     if (cmdName === key) {
-        //         let parameters = cmdLine.slice(1)
-        //         func(msg, parameters)
-        //     }
-        // })
         try {
             await boltService.getRequiredService(CommandService).invoke(msg, msg.body)
         }

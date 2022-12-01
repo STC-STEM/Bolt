@@ -8,10 +8,6 @@ import { Command, CommandService } from "../../service/command";
 const logger = log4js.getLogger()
 
 export class MPCModule extends ModuleBase {
-    constructor(mm: MainModule) {
-        super(mm)
-    }
-
     initialize(): void {
         getRequiredService(CommandService).register(new Command({
             names: ['mpc'],
