@@ -49,7 +49,7 @@ export class CommandService extends ServiceBase {
         this.commands.push(c)
     }
 
-    async invoke(msg: Message, cmdline: string) {
+    async invoke(msg: Message, cmdline: string, force: boolean = false) {
         let args = cmdline.split(' ')
         let cmdName = args.splice(0, 1)[0].substring(1)
         let cmdPara = args.join(' ')
@@ -57,7 +57,7 @@ export class CommandService extends ServiceBase {
         let c = this.commands.find(x => x.names.indexOf(cmdName) != -1)
         if (c == undefined)
             return
-        if (!await this.userService.hasPermission(getMessageSender(msg), c.perms)) {
+        if (!force && !await this.userService.hasPermission(getMessageSender(msg), c.perms)) {
             msg.reply('You do not have permission to exec this command')
             return
         }

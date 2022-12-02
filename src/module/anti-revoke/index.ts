@@ -44,9 +44,9 @@ export class AntiRevokeModule extends ModuleBase {
                 if (args.list) {
                     let users = await AppDataSource.getRepository(User).find()
                     let result = users.filter(x => x.permissions.some(y => y === 'anti-revoke.ingore'))
-                        .map(x => x.whatsappId.split('@')[0])
-                        .reduce((x, y) => x.concat('\n', y))
-                    msg.reply(`ignored users:\n${result}`)
+                        .map(x => '\n+' + x.whatsappId.split('@')[0])
+                        .reduce((x, y) => x + y)
+                    msg.reply(`ignored users:${result}`)
                 }
             }
         }))

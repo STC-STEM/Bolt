@@ -6,8 +6,11 @@ import { Command, CommandService } from "../../service/command"
 const logger = log4js.getLogger()
 
 export class MiscModule extends ModuleBase {
+    commandService!: CommandService
+
     initialize(): void {
-        getRequiredService(CommandService).register(new Command({
+        this.commandService = getRequiredService(CommandService)
+        this.commandService.register(new Command({
             names: ['version'],
             perms: [],
             commandOption: {},
@@ -15,7 +18,7 @@ export class MiscModule extends ModuleBase {
                 msg.reply('Bolt is a very simple WhatsApp BOT!\nCurrent version: v0.0.0')
             }
         }))
-        getRequiredService(CommandService).register(new Command({
+        this.commandService.register(new Command({
             names: ['calcgaeness'],
             perms: [],
             commandOption: {},
@@ -23,6 +26,14 @@ export class MiscModule extends ModuleBase {
                 if (args._.length > 0) {
                     msg.reply(`The gaeness of ${args._.join(' ')} is ${Math.floor(Math.random() * 101)}%`)
                 }
+            }
+        }))
+        this.commandService.register(new Command({
+            names: ['sudo'],
+            perms: ['admin.sudo'],
+            commandOption: {},
+            command:async (msg, args) => {
+                this.commandService.invoke(msg, args._.join(' '), true)
             }
         }))
     }

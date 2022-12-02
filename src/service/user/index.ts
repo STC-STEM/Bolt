@@ -12,11 +12,9 @@ export class UserService extends ServiceBase {
 
     async getUserByID(whatsappId: string) {
         let user = await AppDataSource.getRepository(User).findOneBy({whatsappId: whatsappId})
-        if (user == null) {
-            user = new User()
-            user.whatsappId = whatsappId
-            await AppDataSource.getRepository(User).save(user)
-        }
+        user ??= await AppDataSource.getRepository(User).save(
+            AppDataSource.getRepository(User).create({whatsappId: whatsappId})
+        )
         return user
     }
 
