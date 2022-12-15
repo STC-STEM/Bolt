@@ -50,14 +50,14 @@ export class AntiRevokeModule extends ModuleBase {
                 }
             }
         }))
-        this.mainModule.client.on('message_revoke_everyone', async (msg, revokedMsg) => {
-            if (revokedMsg == null)
-                return
-            let sender = getMessageSender(msg)
-            if (await this.userService.hasPermission(sender, 'anti-revoke.ingore'))
-                return
-            let chat = await msg.getChat()
-            chat.sendMessage(`Anti-revoke BOT! ${sender.split('@')[0]} has revoked:\n${revokedMsg.body}`)
-        })
+        // this.mainModule.client.on('message_revoke_everyone', async (msg, revokedMsg) => {
+        //     if (revokedMsg == null)
+        //         return
+        //     let sender = getMessageSender(msg)
+        //     if (await this.userService.hasPermission(sender, 'anti-revoke.ingore'))
+        //         return
+        //     let chat = await msg.getChat()
+        //     chat.sendMessage(`Anti-revoke BOT! +${sender.split('@')[0]} has revoked:\n${revokedMsg.body}`)
+        // })
     }
 }
