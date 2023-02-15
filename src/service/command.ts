@@ -3,11 +3,11 @@ import { Options as MinimistOptions } from "minimist-options";
 import minimistBuildOptions from "minimist-options";
 import minimist from 'minimist';
 import shellQuote from 'shell-quote';
-import { ServiceBase } from "../../common/service-base";
+import { ServiceBase } from "../common/service-base";
 import { Message } from "whatsapp-web.js";
-import { getRequiredService } from "..";
-import { UserService } from "../user";
-import { getMessageSender } from "../../util";
+import { getRequiredService } from ".";
+import { UserService } from "./user";
+import { getMessageSender } from "../util";
 
 
 const logger = log4js.getLogger()
@@ -41,11 +41,10 @@ export class CommandService extends ServiceBase {
     private commands: Command[] = []
 
     initialize(): void {
-
+        this.userService = getRequiredService(UserService)
     }
 
     register(c: Command) {
-        this.userService = getRequiredService(UserService)
         this.commands.push(c)
     }
 
@@ -58,9 +57,18 @@ export class CommandService extends ServiceBase {
         if (c == undefined)
             return
         if (!force && !await this.userService.hasPermission(getMessageSender(msg), c.perms)) {
-            msg.reply('You do not have permission to exec this command')
+            msg.react('🚫')
+            msg.reply('You do not have permission to exec this command!')
             return
         }
-        await c.invoke(msg, cmdPara)
+        try {
+            await c.invoke(msg, cmdPara)
+            msg.react('✅')
+        }
+        catch (e) {
+            logger.warn(`Error occur while executing command '${msg.body}',`, e)
+            msg.react('❌')
+            msg.reply('error occur, check log for more detail!')
+        }
     }
 }

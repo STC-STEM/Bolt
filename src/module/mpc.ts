@@ -2,11 +2,10 @@ import * as log4js from "log4js"
 import axios from "axios"
 import * as cheerio from 'cheerio'
 import * as cron from 'node-cron'
-import { ModuleBase } from "../../common/module-base";
-import { getRequiredService } from "../../service";
-import { Command, CommandService } from "../../service/command";
-import { AppDataSource } from "../../data-source";
-import { MPCCron } from "../../entity/mpc-cron";
+import { ModuleBase } from "../common/module-base";
+import { getRequiredService } from "../service";
+import { Command, CommandService } from "../service/command";
+import { MPCCron } from "../entity/mpc-cron";
 
 
 const logger = log4js.getLogger()
@@ -42,34 +41,34 @@ export class MPCModule extends ModuleBase {
             command: async (msg, args) => {
                 if (args.add) {
                     let currChat = (await msg.getChat()).id._serialized
-                    let result = await AppDataSource.getRepository(MPCCron).findOneBy({
+                    let result = await MPCCron.findOneBy({
                         registeredChat: currChat
                     })
                     if (result != null) {
                         msg.reply('You have already registered this chat!')
                         return
                     }
-                    await AppDataSource.getRepository(MPCCron).save(
-                        AppDataSource.getRepository(MPCCron).create({registeredChat: currChat})
+                    await MPCCron.save(
+                        MPCCron.create({registeredChat: currChat})
                     )
                     msg.reply('Registered!')
                     return
                 }
                 if (args.remove) {
                     let currChat = (await msg.getChat()).id._serialized
-                    let result = await AppDataSource.getRepository(MPCCron).findOneBy({
+                    let result = await MPCCron.findOneBy({
                         registeredChat: currChat
                     })
                     if (result == null) {
                         msg.reply('This chat has not been registered yet!')
                         return
                     }
-                    await AppDataSource.getRepository(MPCCron).remove(result)
+                    await MPCCron.remove(result)
                     msg.reply('Deregistered!')
                     return
                 }
                 if (args.list) {
-                    let registeredChats = await AppDataSource.getRepository(MPCCron).find()
+                    let registeredChats = await MPCCron.find()
                     msg.reply(`Registered chats:\n${registeredChats.map(x => x.registeredChat).join('\n')}`)
                     return
                 }
@@ -89,7 +88,7 @@ export class MPCModule extends ModuleBase {
 
         cron.schedule('0 18 * * 1-5', async () => {
             try {
-                let registeredChats = await AppDataSource.getRepository(MPCCron).find()
+                let registeredChats = await MPCCron.find()
                 for (let c of registeredChats) {
                     let chat = await this.mainModule.client.getChatById(c.registeredChat)
                     chat.sendMessage(await this.getTodayMpcInfo())
@@ -103,8 +102,8 @@ export class MPCModule extends ModuleBase {
 
     private async getTodayMpcInfo() {
         let mpcLinks = await this.getMpcData()
-        let todayMpc = mpcLinks.at(-1)
-        let yesterdayMpc = mpcLinks.at(-2)
+        let todayMpc = mpcLinks.at(-2)
+        let lastMpc = mpcLinks.at(-3)
         let replyMsg: string
 
         if (todayMpc?.at(1) == undefined) {
@@ -112,10 +111,10 @@ export class MPCModule extends ModuleBase {
         }
 
         replyMsg = `Today's mpc link is ${todayMpc.at(1)} (${todayMpc.at(0)})`
-        if (yesterdayMpc?.at(1) == undefined)
+        if (lastMpc?.at(1) == undefined)
             return replyMsg
 
-        replyMsg += `\nYesterday's mpc link is ${yesterdayMpc.at(1)} (${yesterdayMpc.at(0)})`
+        replyMsg += `\nLast time's mpc link is ${lastMpc.at(1)} (${lastMpc.at(0)})`
         return replyMsg
     }
 
@@ -126,7 +125,7 @@ export class MPCModule extends ModuleBase {
                 headers: {'Accept-Encoding': 'identity'}
             })
             let $ = cheerio.load(res.data)
-            this.fetchCache = $('a[class="XqQF9c rXJpyf"]').get().map(x => [$(x).find('strong').text(), x.attribs['href']])
+            this.fetchCache = $('a.XqQF9c').get().map(x => [$(x).find('span').text(), x.attribs['href']])
             return this.fetchCache
         }
         else

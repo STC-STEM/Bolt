@@ -1,7 +1,7 @@
 import * as log4js from "log4js"
-import { ModuleBase } from "../../common/module-base"
-import { getRequiredService } from "../../service"
-import { Command, CommandService } from "../../service/command"
+import { ModuleBase } from "../common/module-base"
+import { getRequiredService } from "../service"
+import { Command, CommandService } from "../service/command"
 
 const logger = log4js.getLogger()
 
@@ -15,7 +15,7 @@ export class MiscModule extends ModuleBase {
             perms: [],
             commandOption: {},
             command: async (msg, args) => {
-                msg.reply('Bolt is a very simple WhatsApp BOT!\nCurrent version: v0.0.0')
+                msg.reply('Bolt is a very simple WhatsApp BOT!\nCurrent version: v0.0.1')
             }
         }))
         this.commandService.register(new Command({
@@ -33,7 +33,7 @@ export class MiscModule extends ModuleBase {
             perms: ['admin.sudo'],
             commandOption: {},
             command:async (msg, args) => {
-                this.commandService.invoke(msg, args._.join(' '), true)
+                this.commandService.invoke(msg, msg.body.split(' ').slice(1).join(' '), true)
             }
         }))
     }

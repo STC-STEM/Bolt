@@ -17,7 +17,7 @@ export function initialize() {
         logger.info('Initializing Services...')
         for (let s of registeredServices) {
             initializedServices.push(new s())
-            logger.info('Service Loaded:', initializedServices.at(-1)!['constructor'].name)
+            logger.info('Service Loaded:', s.prototype.constructor.name)
         }
         initializedServices.forEach(s => s.initialize())
     }

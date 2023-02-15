@@ -1,12 +1,11 @@
 import * as log4js from "log4js"
-import { MainModule } from "../../common/main-module"
-import { ModuleBase } from "../../common/module-base"
-import { AppDataSource } from "../../data-source"
-import { User } from "../../entity/user"
-import { getRequiredService } from "../../service"
-import { Command, CommandService } from "../../service/command"
-import { UserService } from "../../service/user"
-import { getMessageSender } from "../../util"
+import { ModuleBase } from "../common/module-base"
+import { AppDataSource } from "../data-source"
+import { User } from "../entity/user"
+import { getRequiredService } from "../service"
+import { Command, CommandService } from "../service/command"
+import { UserService } from "../service/user"
+
 
 const logger = log4js.getLogger()
 

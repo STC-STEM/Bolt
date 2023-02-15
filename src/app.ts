@@ -28,7 +28,10 @@ const logger = log4js.getLogger()
 
 
 const client = new Client({
-    authStrategy: new LocalAuth()
+    authStrategy: new LocalAuth(),
+    puppeteer: {
+        args: ['--no-sandbox']
+    }
 })
 
 client.on('loading_screen', (persent, msg) => {

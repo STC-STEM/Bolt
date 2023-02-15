@@ -1,7 +1,6 @@
 import * as log4js from "log4js"
-import { ServiceBase } from "../../common/service-base";
-import { AppDataSource } from "../../data-source";
-import { User } from "../../entity/user";
+import { ServiceBase } from "../common/service-base";
+import { User } from "../entity/user";
 
 const logger = log4js.getLogger()
 
@@ -11,9 +10,9 @@ export class UserService extends ServiceBase {
     }
 
     async getUserByID(whatsappId: string) {
-        let user = await AppDataSource.getRepository(User).findOneBy({whatsappId: whatsappId})
-        user ??= await AppDataSource.getRepository(User).save(
-            AppDataSource.getRepository(User).create({whatsappId: whatsappId})
+        let user = await User.findOneBy({whatsappId: whatsappId})
+        user ??= await User.save(
+            User.create({whatsappId: whatsappId})
         )
         return user
     }
@@ -22,10 +21,24 @@ export class UserService extends ServiceBase {
     async hasPermission(whatsappId: string, perms: string[]): Promise<boolean>
     async hasPermission(whatsappId: string, perm: string | string[]): Promise<boolean> {
         const user = await this.getUserByID(whatsappId)
+        const realHasPermission = (perm: string): boolean => {
+            if (user.permissions.includes(perm))
+                return true
+
+            let permSecs = perm.split('.')
+            for (let i = permSecs.length; i >= 0; i--) {
+                permSecs[i] = '*'
+                let reConcated = permSecs.slice(0, i + 1).join('.')
+                if (user.permissions.includes(reConcated))
+                    return true
+            }
+            return false
+        }
+        
         if (typeof perm === 'string')
-            return user.permissions.some(x => x === perm)
+            return realHasPermission(perm)
         else
-            return perm.every(x => user.permissions.some(y => y === x))
+            return perm.every(x => realHasPermission(x))
     }
 
     async addPermission(whatsappId: string, perm: string) {
@@ -33,7 +46,7 @@ export class UserService extends ServiceBase {
         if (user.permissions.some(x => x === perm))
             return
         user.permissions.push(perm)
-        await AppDataSource.getRepository(User).save(user)
+        await User.save(user)
     }
 
     async removePermission(whatsappId: string, perm: string) {
@@ -41,6 +54,6 @@ export class UserService extends ServiceBase {
         if (user.permissions.every(x => x !== perm))
             return
         user.permissions.splice(user.permissions.indexOf(perm), 1)
-        await AppDataSource.getRepository(User).save(user)
+        await User.save(user)
     }
 }
