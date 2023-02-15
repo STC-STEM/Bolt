@@ -29,6 +29,42 @@ export class MiscModule extends ModuleBase {
             }
         }))
         this.commandService.register(new Command({
+            names: ['random'],
+            perms: [],
+            commandOption: {},
+            command: async (msg, args) => {
+                if (args._.length < 2 || args._.length > 3) {
+                    msg.reply('usage: /random <start> <end> [count]')
+                    return
+                }
+                if (args._.some(x => typeof x !== 'number')) {
+                    msg.reply('num plz😰')
+                    return
+                }
+                let start = (args._.at(0) as unknown as number)
+                let end = (args._.at(1) as unknown as number)
+                let count = (args._.at(2) as unknown as number)
+                if (start > end) {
+                    msg.reply('end should be > than start')
+                    return
+                }
+                if (count != undefined && count < 1) {
+                    msg.reply('count should be > than 0')
+                    return
+                }
+                if (count == undefined) {
+                    msg.reply(`${start + Math.floor(Math.random() * (end - start + 1))}`)
+                }
+                else {
+                    let arr = new Array<number>(count)
+                    for (let i = 0; i < arr.length; i++) {
+                        arr[i] = start + Math.floor(Math.random() * (end - start + 1))
+                    }
+                    msg.reply(`${arr.join('\n')}`)
+                }
+            }
+        }))
+        this.commandService.register(new Command({
             names: ['sudo'],
             perms: ['admin.sudo'],
             commandOption: {},

@@ -52,8 +52,23 @@ client.on('auth_failure', err => {
     logger.error('Failed to login!', err)
 })
 
+var ready = false
+var transfering = true
 client.on('ready', async () => {
     logger.info('Client Ready!')
+    logger.info('Waiting until messsage transfer finished')
+    let timeoutCallBack = () => {
+        if (transfering) {
+            setTimeout(timeoutCallBack, 1000)
+            logger.info('tranfering...')
+        }
+        else {
+            ready = true
+            logger.info('transfer finished!')
+        }
+        transfering = false
+    }
+    timeoutCallBack()
     // let chats = await client.getChats()
     // let chatInfos = chats.map(x => `${x.isGroup ? 'Group' : 'Chat'} ID: ${x.id._serialized}, Name: ${x.name}`).join('\n')
     // logger.debug(`Chats:\n${chatInfos}`)
@@ -61,6 +76,10 @@ client.on('ready', async () => {
 
 client.on('message_create', async msg => {
     logger.info(`Msg Recieved From: ${msg.from}, To: ${msg.to}, Body: ${msg.body}`)
+    if (!ready){
+        transfering = true
+        return
+    }
     if (msg.body.startsWith('/')) {
         logger.debug(`Processing Command '${msg.body}' ...`)
         try {
