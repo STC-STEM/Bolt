@@ -81,16 +81,17 @@ export class MPCModule extends ModuleBase {
                         logger.warn('MPCModule axios error,', e)
                     }
                     else
-                        logger.error('MPCModule error,', e)
+                        throw e
                 }
             }
         }))
 
-        cron.schedule('0 16 * * 1-5', async () => {
+        cron.schedule('30 17 * * 1-5', async () => {
             try {
                 let registeredChats = await MPCCron.find()
                 for (let c of registeredChats) {
                     let chat = await this.mainModule.client.getChatById(c.registeredChat)
+                    chat.sendMessage('麻煩同學記得簽通告同埋做mpc🙇🙇')
                     chat.sendMessage(await this.getTodayMpcInfo())
                 }
             }
@@ -102,8 +103,8 @@ export class MPCModule extends ModuleBase {
 
     private async getTodayMpcInfo() {
         let mpcLinks = await this.getMpcData()
-        let todayMpc = mpcLinks.at(-2)
-        let lastMpc = mpcLinks.at(-3)
+        let todayMpc = mpcLinks.at(-1)
+        let lastMpc = mpcLinks.at(-2)
         let replyMsg: string
 
         if (todayMpc?.at(1) == undefined) {
@@ -125,7 +126,9 @@ export class MPCModule extends ModuleBase {
                 headers: {'Accept-Encoding': 'identity'}
             })
             let $ = cheerio.load(res.data)
-            this.fetchCache = $('a.XqQF9c').get().map(x => [$(x).find('span').text(), x.attribs['href']])
+            this.fetchCache = $('a').get()
+                .filter(x => x.attribs['href']?.startsWith('https://forms.gle'))
+                .map(x => [$(x).find('span').text(), x.attribs['href']])
             return this.fetchCache
         }
         else
