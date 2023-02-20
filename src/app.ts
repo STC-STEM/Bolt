@@ -1,6 +1,7 @@
 import "reflect-metadata"
 import * as log4js from "log4js"
 import * as qrcode from "qrcode-terminal"
+import * as cron from "node-cron"
 import { Client, LocalAuth, Message } from "whatsapp-web.js"
 import { AppDataSource } from "./data-source"
 import * as boltService from "./service"
@@ -105,3 +106,7 @@ client.on('message_create', async msg => {
 
     client.initialize()
 })()
+
+// auto restart (BAD DESIGN)
+// TODO: soft restart
+cron.schedule('30 0 * * *', () => process.exit(0))
