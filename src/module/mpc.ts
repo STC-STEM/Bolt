@@ -127,7 +127,7 @@ export class MPCModule extends ModuleBase {
             })
             let $ = cheerio.load(res.data)
             this.fetchCache = $('a').get()
-                .filter(x => x.attribs['href']?.startsWith('https://forms.gle'))
+                .filter(x => x.attribs['href']?.startsWith('https://forms.gle') || x.attribs['href']?.startsWith('https://docs.google.com'))
                 .map(x => [$(x).find('span').text(), x.attribs['href']])
             return this.fetchCache
         }
