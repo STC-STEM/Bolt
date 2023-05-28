@@ -86,7 +86,7 @@ export class MPCModule extends ModuleBase {
             }
         }))
 
-        cron.schedule('0 17 * * 1-5', async () => {
+        cron.schedule('30 15 * * 1-5', async () => {
             try {
                 let registeredChats = await MPCCron.find()
                 for (let c of registeredChats) {
