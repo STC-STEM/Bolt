@@ -107,6 +107,4 @@ client.on('message_create', async msg => {
     client.initialize()
 })()
 
-// auto restart (BAD DESIGN)
-// TODO: soft restart
-cron.schedule('30 0 * * *', () => process.exit(0))
+cron.schedule('30 0 * * *', () => client.resetState())

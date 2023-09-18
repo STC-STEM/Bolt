@@ -1,5 +1,5 @@
---- ".\\node_modules\\whatsapp-web.js\\src\\Client.js"	2023-09-06 23:22:39.124000000 +0800
-+++ ".\\node_modules\\whatsapp-web.js\\src\\Client.js"	2023-09-12 20:43:54.448658600 +0800
+--- "./node_modules/whatsapp-web.js/src/Client.js"	2023-09-06 23:22:39.124000000 +0800
++++ "./node_modules/whatsapp-web.js/src/Client.js"	2023-09-12 20:43:54.448658600 +0800
 @@ -172,7 +172,7 @@
              }
          );
