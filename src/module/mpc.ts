@@ -11,6 +11,7 @@ import { MPCCron } from "../entity/mpc-cron";
 const logger = log4js.getLogger()
 
 const CACHE_DURATION = 15 * 60 * 1000
+const MPC_URL = 'https://www.stc.edu.hk/school-life/spiritual-life/morning-prayer-challenge'
 export class MPCModule extends ModuleBase {
     fetchCache!: string[][]
     lastUpdateTimeStamp: number = 0
@@ -108,7 +109,7 @@ export class MPCModule extends ModuleBase {
         let replyMsg: string
 
         if (todayMpc?.at(1) == undefined) {
-           return 'No mpc??? Go to https://sites.google.com/stc.edu.hk/faith-ourite-corner/morning-prayer-challenge and check plz'
+           return `No mpc??? Go to ${MPC_URL} and check plz`
         }
 
         replyMsg = `Today's mpc link is ${todayMpc.at(1)} (${todayMpc.at(0)})`
@@ -122,13 +123,13 @@ export class MPCModule extends ModuleBase {
     private async getMpcData() {
         if (Date.now() - this.lastUpdateTimeStamp > CACHE_DURATION) {
             this.lastUpdateTimeStamp = Date.now()
-            let res = await axios.get('https://sites.google.com/stc.edu.hk/faith-ourite-corner/morning-prayer-challenge', {
+            let res = await axios.get(MPC_URL, {
                 headers: {'Accept-Encoding': 'identity'}
             })
             let $ = cheerio.load(res.data)
             this.fetchCache = $('a').get()
                 .filter(x => x.attribs['href']?.startsWith('https://forms.gle') || x.attribs['href']?.startsWith('https://docs.google.com'))
-                .map(x => [$(x).find('span').text(), x.attribs['href']])
+                .map(x => [$(x).text(), x.attribs['href']])
             return this.fetchCache
         }
         else
