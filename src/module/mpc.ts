@@ -127,9 +127,15 @@ export class MPCModule extends ModuleBase {
                 headers: {'Accept-Encoding': 'identity'}
             })
             let $ = cheerio.load(res.data)
-            this.fetchCache = $('a').get()
-                .filter(x => x.attribs['href']?.startsWith('https://forms.gle') || x.attribs['href']?.startsWith('https://docs.google.com'))
-                .map(x => [$(x).text(), x.attribs['href']])
+            let month = $('span.simcal-current-month').text();
+            this.fetchCache = $('td.simcal-day-has-events').get()
+                .map(x => [
+                    $(x).find('span.simcal-day-number').first()?.text() + ' ' + month,
+                    $(x).find('a').text()
+                ])
+            // this.fetchCache = $('a').get()
+            //     .filter(x => x.attribs['href']?.startsWith('https://forms.gle') || x.attribs['href']?.startsWith('https://docs.google.com'))
+            //     .map(x => [$(x).text(), x.attribs['href']])
             return this.fetchCache
         }
         else
