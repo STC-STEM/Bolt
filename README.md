@@ -1,4 +1,14 @@
-# Get Started
+# Bolt
+
+Bolt is a very simple WhatsApp BOT!
+
+## TODO
+
+- `setup` command for oobe
+- group control
+- other stuffs...
+
+## Get Started
 
 ```sh
 git clone https://github.com/STC-STEM/Bolt.git
