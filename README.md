@@ -7,6 +7,8 @@ Bolt is a very simple WhatsApp BOT!
 - `setup` command for oobe
 - group control
 - other stuffs...
+- get more manpower to develop the project
+  
 
 ## Get Started
 
