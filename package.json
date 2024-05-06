@@ -20,7 +20,7 @@
     "shell-quote": "^1.8.0",
     "sqlite3": "^5.1.4",
     "typeorm": "^0.3.12",
-    "whatsapp-web.js": "^1.19.4"
+    "whatsapp-web.js": "github:pedroslopez/whatsapp-web.js#webpack-exodus"
   },
   "devDependencies": {
     "@types/minimist": "^1.2.2",
