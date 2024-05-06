@@ -32,6 +32,10 @@ const client = new Client({
     authStrategy: new LocalAuth(),
     puppeteer: {
         args: ['--no-sandbox']
+    },
+    webVersionCache: {
+        remotePath: 'https://github.com/wppconnect-team/wa-version/raw/main/html/2.2412.54.html',
+        type: 'remote'
     }
 })
 
